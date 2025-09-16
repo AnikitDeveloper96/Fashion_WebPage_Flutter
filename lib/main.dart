@@ -1,38 +1,81 @@
 import 'package:flutter/material.dart';
-
-import 'landingpage.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:fashionwebpageflutter/screens/landingpage.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyD1d-nnNMB49qxCCDiDsxf3lSn1KYZ2Us4",
+      authDomain: "fashionwebpageflutter.firebaseapp.com",
+      projectId: "fashionwebpageflutter",
+      storageBucket: "fashionwebpageflutter.appspot.com",
+      messagingSenderId: "439129653878",
+      appId: "1:439129653878:web:9a79bba75b8c1b2868d557",
+      measurementId: "G-KJSXV149JG",
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: FashionWebLandingPage(),
+    return FutureBuilder(
+      future: _initialization,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(child: Text("Error: ${snapshot.error}")),
+            ),
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.done) {
+          return MaterialApp(
+            title: 'Fashion Web',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            home: const FashionWebLandingPage(),
+          );
+        }
+
+        return const MaterialApp(
+          home: Scaffold(body: Center(child: CircularProgressIndicator())),
+        );
+      },
     );
   }
 }
+
+// /// web firebase sdk
+// <script type="module">
+//   // Import the functions you need from the SDKs you need
+//   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+//   import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+//   // TODO: Add SDKs for Firebase products that you want to use
+//   // https://firebase.google.com/docs/web/setup#available-libraries
+
+//   // Your web app's Firebase configuration
+//   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+//   const firebaseConfig = {
+//     apiKey: "AIzaSyD1d-nnNMB49qxCCDiDsxf3lSn1KYZ2Us4",
+//     authDomain: "fashionwebpageflutter.firebaseapp.com",
+//     projectId: "fashionwebpageflutter",
+//     storageBucket: "fashionwebpageflutter.firebasestorage.app",
+//     messagingSenderId: "439129653878",
+//     appId: "1:439129653878:web:9a79bba75b8c1b2868d557",
+//     measurementId: "G-KJSXV149JG"
+//   };
+
+//   // Initialize Firebase
+//   const app = initializeApp(firebaseConfig);
+//   const analytics = getAnalytics(app);
+// </script>
